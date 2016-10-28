@@ -22,19 +22,20 @@ export BASE_DIR=$(dirname $0)/../..
 
 echo "======================================"
 echo "BASE_DIR: ${BASE_DIR}"
+echo "BUILD_DIR: ${BASE_DIR}/build"
 echo
 if [ ! -d ${BASE_DIR}/build ]; then
     echo "=================================="
     echo "${BASE_DIR}/build doesn't exist"
     echo
-    exit 0
+    exit 1
 fi
 cd ${BASE_DIR}/build/
 if [ ! -e build.sh ]; then
     echo "=================================="
     echo "build.sh doesn't exist"
     echo
-    exit 0
+    exit 1
 fi
 echo ./build.sh
 ./build.sh

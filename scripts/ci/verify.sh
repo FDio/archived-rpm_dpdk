@@ -18,14 +18,23 @@ elif [ -f /etc/redhat-release ];then
     cat /etc/redhat-release
     echo
 fi
-export BASE_DIR=$(dirname $0)/../rpm_dpdk
+export BASE_DIR=$(dirname $0)/../..
 
 echo "======================================"
 echo "BASE_DIR: ${BASE_DIR}"
 echo
-if [ -d ${BASE_DIR}/build ]; then
-    cd ${BASE_DIR}/build/
-    if [ -e build.sh ]; then
-        ./build.sh
-    fi
+if [ ! -d ${BASE_DIR}/build ]; then
+    echo "=================================="
+    echo "${BASE_DIR}/build doesn't exist"
+    echo
+    exit 0
 fi
+cd ${BASE_DIR}/build/
+if [ ! -e build.sh ]; then
+    echo "=================================="
+    echo "build.sh doesn't exist"
+    echo
+    exit 0
+fi
+echo ./build.sh
+./build.sh

@@ -26,3 +26,8 @@ if [ -d $TMPDIR ]
 then
     rm -rf $TMPDIR
 fi
+
+if [ -d $TOPDIR/rpmbuild ]
+then
+    rm -rf rpmbuild
+fi

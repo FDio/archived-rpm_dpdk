@@ -117,20 +117,43 @@ snapser=`git log --pretty=oneline | wc -l`
 
 makever=`make showversion`
 basever=`echo ${makever} | cut -d- -f1`
-prefix=dpdk-${basever:0:5}
+snapver=${snapser}.git${snapgit}
 
-archive=${prefix}.tar.gz
-DPDK_VERSION=$basever
+if [[ "$DPDK_VERSION" =~ "master" ]]; then
+    prefix=dpdk-${basever}.${snapser}.git${snapgit}
+    archive=${prefix}.tar.gz
+else
+    prefix=dpdk-${basever:0:5}
+    archive=${prefix}.tar.gz
+fi
 
 echo "-------------------------------"
-echo "Creating ${archive}"
+echo "Creating archive: ${archive}"
 echo
 git archive --prefix=${prefix}/ HEAD  | gzip -9 > ${archive}
 cp ${archive} $RPMDIR/SOURCES/
 echo "-------------------------------"
 echo building RPM for DPDK version $DPDK_VERSION
 echo
+echo DPDK_VERSION is $DPDK_VERSION
 
-rpmbuild -bb -vv --define "_topdir $RPMDIR" --define "_snapver $snapgit" dpdk.spec
+if [[ "$DPDK_VERSION" =~ "master" ]]; then
+    rpmbuild -bb -vv --define "_topdir $RPMDIR" --define "_snapver $snapver" --define "_ver $basever" dpdk.spec
+else
+    rpmbuild -bb -vv --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
+fi
 
+#
+# Copy all RPMs to build directory
+#
+echo Copy all RPMs to build directory
+cd $RPMDIR
+RPMS=$(find . -type f -iname '*.rpm')
+SRPMS=$(find . -type f -iname '*.srpm')
+SRCRPMS=$(find . -type f -name '*.src.rpm')
+
+for i in $RPMS $SRPMS $SRCRPMS
+do
+    cp $i $HOME
+done
 exit 0

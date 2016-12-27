@@ -1,4 +1,3 @@
-%define ver %{_ver}
 # Add option to build as static libraries (--without shared)
 %bcond_without shared
 # Add option to build without examples
@@ -7,14 +6,14 @@
 %bcond_without tools
 
 # Dont edit Version: and Release: directly, only these:
-%define ver 16.07
-%define rel 4
+%define ver %{?_ver}
+%define rel 5
 # Define when building git snapshots
 
-%define srcver %{ver}%{?_snapver:-%{_snapver}}
+%define srcver %{ver}%{?_snapver:.%{_snapver}}
 
 Name: dpdk
-Version: %{ver}.0
+Version: %{ver}
 Release: %{?_snapver:0.%{_snapver}.}%{rel}%{?dist}
 URL: http://dpdk.org
 Source: http://dpdk.org/browse/dpdk/snapshot/dpdk-%{srcver}.tar.gz
@@ -257,6 +256,9 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %endif
 
 %changelog
+* Fri Dec 30 2016 Thomas F Herbert <therbert@tedhat.com> 16.11.0-5
+- Builds 16.07, 16.11 and 17.02 snapshot 17.02-6119.git112fc39b
+
 * Tue May 24 2016 Panu Matilainen <pmatilai@redhat.com> - 16.07-0.4560.git587d684d.4
 - Create DT_NEEDED entries for internal library dependencies
 - Fix missing zlib dependency on qede driver

@@ -110,8 +110,6 @@ else
     git checkout v$DPDK_VERSION
 fi
 
-cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
-cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SPECS
 cp $HOME/dpdk-snap/* $RPMDIR/SOURCES
 snapser=`git log --pretty=oneline | wc -l`
 
@@ -119,13 +117,28 @@ makever=`make showversion`
 basever=`echo ${makever} | cut -d- -f1`
 snapver=${snapser}.git${snapgit}
 
+
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
     prefix=dpdk-${basever}.${snapser}.git${snapgit}
-    archive=${prefix}.tar.gz
+    cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
+    cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SOURCES
+    cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SPECS
 else
     prefix=dpdk-${basever:0:5}
-    archive=${prefix}.tar.gz
+    if [[ "$DPDK_PATCH"  =~ "yes" && "$DPDK_VERSION" =~ "16.11" ]]; then
+        echo "----------------------------------------------"
+        echo "Copy applicable patches."
+        cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
+        cp $HOME/dpdk-snap/dpdk.1611.spec $TMPDIR/dpdk/dpdk.spec
+        cp $HOME/dpdk-snap/dpdk.1611.spec $RPMDIR/SPECS/dpdk.spec
+        cp $HOME/dpdk-snap/dpdk.1611.spec $RPMDIR/SOURCES/dpdk.spec
+    else
+        cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
+        cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SOURCES
+        cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SPECS
+    fi
 fi
+archive=${prefix}.tar.gz
 
 echo "-------------------------------"
 echo "Creating archive: ${archive}"

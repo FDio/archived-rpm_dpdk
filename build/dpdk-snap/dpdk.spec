@@ -257,7 +257,7 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 
 %changelog
 * Fri Dec 30 2016 Thomas F Herbert <therbert@tedhat.com> 16.11.0-5
-- Builds 16.07, 16.11 and 17.02 snapshot 17.02-6119.git112fc39b
+- Builds 16.07 and 16.11
 
 * Tue May 24 2016 Panu Matilainen <pmatilai@redhat.com> - 16.07-0.4560.git587d684d.4
 - Create DT_NEEDED entries for internal library dependencies

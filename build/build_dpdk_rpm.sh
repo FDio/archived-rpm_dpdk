@@ -32,7 +32,7 @@ usage() {
     -p <patch url>  -- Specify url to patches if required for ovs rpm.  \
     -v              -- Set verbose mode."
 }
-while getopts "g:hkp:u:v" opt; do
+while getopts "g:hkp:s:u:v" opt; do
     case "$opt" in
         g)
             DPDK_VERSION=${OPTARG}
@@ -46,6 +46,9 @@ while getopts "g:hkp:u:v" opt; do
             ;;
         p)
             DPDK_PATCH=${OPTARG}
+            ;;
+        s)
+            SRC=${OPTARG}
             ;;
         u)
             DPDK_REPO_URL=${OPTARG}
@@ -120,9 +123,6 @@ snapver=${snapser}.git${snapgit}
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
     prefix=dpdk-${basever}.${snapser}.git${snapgit}
-    cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
-    cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SOURCES
-    cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SPECS
 else
     prefix=dpdk-${basever:0:5}
     if [[ "$DPDK_PATCH"  =~ "yes" && "$DPDK_VERSION" =~ "16.11" ]]; then
@@ -130,14 +130,31 @@ else
         echo "Copy applicable patches."
         cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
         cp $HOME/dpdk-snap/dpdk.1611.spec $TMPDIR/dpdk/dpdk.spec
-        cp $HOME/dpdk-snap/dpdk.1611.spec $RPMDIR/SPECS/dpdk.spec
-        cp $HOME/dpdk-snap/dpdk.1611.spec $RPMDIR/SOURCES/dpdk.spec
     else
         cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
-        cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SOURCES
-        cp $HOME/dpdk-snap/dpdk.spec $RPMDIR/SPECS
     fi
 fi
+cp $TMPDIR/dpdk/dpdk.spec $RPMDIR/SOURCES
+cp $TMPDIR/dpdk/dpdk.spec $RPMDIR/SPECS
+
+
+if [[ ! "${SRC}dummy" == "dummy" ]]; then
+    echo "---------------------------------------"
+    echo "Build SRPM"
+    echo
+#   Workaround for some versions of centos dist macro is defined as .el7.centos
+#   breaking downstream builds when built from src rpm
+    BUILD_OPT=(-bs --define "dist .el7")
+    if [[ "$DPDK_VERSION" =~ "master" ]]; then
+        sed -i "s/%define ver.*/%define ver ${DPDK_VERSION}\
+%define snapver ${snapver}/" $TMPDIR/dpdk/dpdk.spec
+    else
+        sed -i "s/%define ver.*/%define ver ${DPDK_VERSION}/" $TMPDIR/dpdk/dpdk.spec
+    fi
+else
+    BUILD_OPT=(-bb)
+fi
+
 archive=${prefix}.tar.gz
 
 echo "-------------------------------"
@@ -151,9 +168,9 @@ echo
 echo DPDK_VERSION is $DPDK_VERSION
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
-    rpmbuild -bb -vv --define "_topdir $RPMDIR" --define "_snapver $snapver" --define "_ver $basever" dpdk.spec
+    rpmbuild "${BUILD_OPT[@]}" -vv --define "_topdir $RPMDIR" --define "_snapver $snapver" --define "_ver $basever" dpdk.spec
 else
-    rpmbuild -bb -vv --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
+    rpmbuild "${BUILD_OPT[@]}" -vv --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
 fi
 
 #
@@ -162,10 +179,9 @@ fi
 echo Copy all RPMs to build directory
 cd $RPMDIR
 RPMS=$(find . -type f -iname '*.rpm')
-SRPMS=$(find . -type f -iname '*.srpm')
 SRCRPMS=$(find . -type f -name '*.src.rpm')
 
-for i in $RPMS $SRPMS $SRCRPMS
+for i in $RPMS $SRCRPMS
 do
     cp $i $HOME
 done

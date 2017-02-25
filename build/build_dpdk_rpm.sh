@@ -128,10 +128,13 @@ else
     if [[ "$DPDK_PATCH"  =~ "yes" && "$DPDK_VERSION" =~ "16.11" ]]; then
         echo "----------------------------------------------"
         echo "Copy applicable patches."
+        echo cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
         cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
         cp $HOME/dpdk-snap/dpdk.1611.spec $TMPDIR/dpdk/dpdk.spec
+    elif [[ "$DPDK_VERSION" =~ "16.07" ]]; then
+        cp $HOME/dpdk-snap/dpdk.1607.spec $TMPDIR/dpdk/dpdk.spec
     else
-        cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk
+        cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
     fi
 fi
 cp $TMPDIR/dpdk/dpdk.spec $RPMDIR/SOURCES

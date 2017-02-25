@@ -7,7 +7,7 @@
 
 # Dont edit Version: and Release: directly, only these:
 %define ver %{?_ver}
-%define rel 5
+%define rel 6
 # Define when building git snapshots
 
 %define srcver %{ver}%{?_snapver:.%{_snapver}}

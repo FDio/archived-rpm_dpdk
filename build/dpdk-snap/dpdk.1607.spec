@@ -7,7 +7,7 @@
 
 # Dont edit Version: and Release: directly, only these:
 %define ver %{?_ver}
-%define rel 1
+%define rel 5
 # Define when building git snapshots
 
 %define srcver %{ver}%{?_snapver:.%{_snapver}}
@@ -115,6 +115,12 @@ function setconf()
 # In case dpdk-devel is installed
 unset RTE_SDK RTE_INCLUDE RTE_TARGET
 
+# Avoid appending second -Wall to everything, it breaks hand-picked
+# disablers like per-file -Wno-strict-aliasing. Strip expclit -march=
+# from rpm optflags because they will just make builds fail, DPDK is
+# really picky about these things.
+export EXTRA_CFLAGS="`echo %{optflags} | sed -e 's:-Wall::g' -e 's:-march=[[:alnum:]]* ::g'` -Wformat -fPIC"
+
 make V=1 O=%{target} T=%{target} %{?_smp_mflags} config
 
 # DPDK defaults to optimizing for the builder host we need generic binaries
@@ -168,10 +174,10 @@ done
 %endif
 
 %if ! %{with tools}
-rm -rf %{buildroot}%{sdkdir}/usertools
+rm -rf %{buildroot}%{sdkdir}/tools
 rm -rf %{buildroot}%{_sbindir}/dpdk-devbind
 %endif
-rm -f %{buildroot}%{sdkdir}/usertools/setup.sh
+rm -f %{buildroot}%{sdkdir}/tools/setup.sh
 
 %if %{with examples}
 find %{target}/examples/ -name "*.map" | xargs rm -f
@@ -224,7 +230,7 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %{incdir}/
 %{sdkdir}/
 %if %{with tools}
-%exclude %{sdkdir}/usertools/
+%exclude %{sdkdir}/tools/
 %endif
 %if %{with examples}
 %exclude %{sdkdir}/examples/
@@ -245,17 +251,11 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 
 %if %{with tools}
 %files tools
-%{sdkdir}/usertools/
+%{sdkdir}/tools/
 %{_sbindir}/dpdk-devbind
 %endif
 
 %changelog
-* Mon Feb 27 2017 Thomas F Herbert <therbert@tedhat.com> 17.02.0-1
-- New usertools dir. Remove override of default gcc flags.
-
-* Fri Jan 13 2017 Thomas F Herbert <therbert@tedhat.com> 16.11.0-6
-- Applies virtio driver patch to 16.11
-
 * Fri Dec 30 2016 Thomas F Herbert <therbert@tedhat.com> 16.11.0-5
 - Builds 16.07 and 16.11
 

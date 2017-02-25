@@ -27,8 +27,15 @@ echo "Build DPDK SRPM for 16.11 release"
 
 ./build_dpdk_rpm.sh -g 16.11 -p yes -s yes
 
+echo "Build DPDK RPM for 17.02 release"
+
+./build_dpdk_rpm.sh -g 17.02
+
+echo "Build DPDK SRPM for 17.02 release"
+
+./build_dpdk_rpm.sh -g 17.02 -s yes
+
 echo "Build from snapshot of master skipped for now because upstream commits"
-echo "change tool directory locations."
 
 ./clean.sh
 

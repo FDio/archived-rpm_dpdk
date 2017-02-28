@@ -123,6 +123,7 @@ snapver=${snapser}.git${snapgit}
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
     prefix=dpdk-${basever}.${snapser}.git${snapgit}
+    cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
 else
     prefix=dpdk-${basever:0:5}
     if [[ "$DPDK_PATCH"  =~ "yes" && "$DPDK_VERSION" =~ "16.11" ]]; then
@@ -149,8 +150,9 @@ if [[ ! "${SRC}dummy" == "dummy" ]]; then
 #   breaking downstream builds when built from src rpm
     BUILD_OPT=(-bs --define "dist .el7")
     if [[ "$DPDK_VERSION" =~ "master" ]]; then
-        sed -i "s/%define ver.*/%define ver ${DPDK_VERSION}\
-%define snapver ${snapver}/" $TMPDIR/dpdk/dpdk.spec
+        sed -i "/%define ver.*/c\\
+%define ver ${basever}\\
+%define _snapver ${snapver}" $TMPDIR/dpdk/dpdk.spec
     else
         sed -i "s/%define ver.*/%define ver ${DPDK_VERSION}/" $TMPDIR/dpdk/dpdk.spec
     fi

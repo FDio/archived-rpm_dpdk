@@ -35,8 +35,12 @@ echo "Build DPDK SRPM for 17.02 release"
 
 ./build_dpdk_rpm.sh -g 17.02 -s yes
 
-echo "Build from snapshot of master skipped for now because upstream commits"
+echo "Build DPDK RPM from snapshot of master"
 
+./build_dpdk_rpm.sh -g master
+
+echo "Build DPDK SRPM from snapshot of master"
+./build_dpdk_rpm.sh -g master -s yes
 ./clean.sh
 
 exit 0

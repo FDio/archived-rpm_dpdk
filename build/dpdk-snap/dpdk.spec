@@ -14,7 +14,7 @@
 
 Name: dpdk
 Version: %{ver}
-Release: %{?_snapver:0.%{_snapver}.}%{rel}%{?dist}
+Release: %{?_snapver:%{_snapver}.}%{rel}%{?dist}
 URL: http://dpdk.org
 Source: http://dpdk.org/browse/dpdk/snapshot/dpdk-%{srcver}.tar.gz
 

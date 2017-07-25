@@ -250,6 +250,9 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %endif
 
 %changelog
+* Wed Jul 26 2017 Thomas F Herbert <therbert@tedhat.com> 17.08
+- Build 17.05, 17.08-rc1 and 17.08-rc2
+
 * Mon Feb 27 2017 Thomas F Herbert <therbert@tedhat.com> 17.02.0-1
 - New usertools dir. Remove override of default gcc flags.
 

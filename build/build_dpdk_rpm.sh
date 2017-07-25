@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Copyright (c) 2016 Open Platform for NFV Project, Inc. and its contributors
-# Copyright (c) 2016 Red Hat, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -113,16 +112,24 @@ else
     git checkout v$DPDK_VERSION
 fi
 
+if [[ "$DPDK_VERSION" =~ "rc" ]]; then
+    DPDK_VERSION=`echo $DPDK_VERSION | sed -e 's/-/_/'`
+fi
+
 cp $HOME/dpdk-snap/* $RPMDIR/SOURCES
 snapser=`git log --pretty=oneline | wc -l`
 
 makever=`make showversion`
 basever=`echo ${makever} | cut -d- -f1`
+rc=`echo ${makever} | cut -d- -f2 -s`
 snapver=${snapser}.git${snapgit}
 
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
     prefix=dpdk-${basever}.${snapser}.git${snapgit}
+    cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
+elif [ ! -z "$rc" ]; then
+    prefix=dpdk-${basever:0:5}_${rc}
     cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
 else
     prefix=dpdk-${basever:0:5}
@@ -151,8 +158,8 @@ if [[ ! "${SRC}dummy" == "dummy" ]]; then
     BUILD_OPT=(-bs --define "dist .el7")
     if [[ "$DPDK_VERSION" =~ "master" ]]; then
         sed -i "/%define ver.*/c\\
-%define ver ${basever}\\
-%define _snapver ${snapver}" $TMPDIR/dpdk/dpdk.spec
+                %define ver ${basever}\\
+                %define _snapver ${snapver}" $TMPDIR/dpdk/dpdk.spec
     else
         sed -i "s/%define ver.*/%define ver ${DPDK_VERSION}/" $TMPDIR/dpdk/dpdk.spec
     fi
@@ -173,9 +180,9 @@ echo
 echo DPDK_VERSION is $DPDK_VERSION
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
-    rpmbuild "${BUILD_OPT[@]}" -vv --define "_topdir $RPMDIR" --define "_snapver $snapver" --define "_ver $basever" dpdk.spec
+    rpmbuild "${BUILD_OPT[@]}" --define "_topdir $RPMDIR" --define "_snapver $snapver" --define "_ver $basever" dpdk.spec
 else
-    rpmbuild "${BUILD_OPT[@]}" -vv --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
+    rpmbuild "${BUILD_OPT[@]}" --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
 fi
 
 #

@@ -21,14 +21,13 @@ echo executing $0 $@
 echo executing on machine `uname -a`
 
 usage() {
-    echo "$0 -g < [master] | [tag] | [commit] > -h -k -p < URL >        \
-             -u < URL > -v                                              \
-                                                                        \
-    -g <DPDK TAG>   -- DPDK release tag commit to build. The default is \
-                       master.                                          \
-    -k              -- Build igb_uio kernel module                      \
-    -h              -- print this message                               \
-    -p <patch url>  -- Specify url to patches if required for ovs rpm.  \
+    echo "$0 -g < [master] | [tag] | [commit] > -h -k -p < URL > -u < URL > -v
+
+    -g <DPDK TAG>   -- DPDK release tag commit to build. The default is
+                       master.
+    -k              -- Build igb_uio kernel module
+    -h              -- print this message
+    -p <patch url>  -- Specify url to patches if required for ovs rpm.
     -v              -- Set verbose mode."
 }
 while getopts "g:hkp:s:u:v" opt; do
@@ -94,16 +93,13 @@ mkdir -p $RPMDIR/SRPMS
 
 
 cd $TMPDIR
-if [ ! -d dpdk ]; then
-    git clone $DPDK_REPO_URL
-    cd dpdk
-else
-    cd dpdk
+if [ -d dpdk ]; then
     set +e
-    make clean
-    rm *.gz
+    rm -rf dpdk
     set -e
 fi
+git clone $DPDK_REPO_URL
+cd dpdk
 
 if [[ "$DPDK_VERSION" =~ "master" ]]; then
     git checkout master
@@ -116,7 +112,6 @@ if [[ "$DPDK_VERSION" =~ "rc" ]]; then
     DPDK_VERSION=`echo $DPDK_VERSION | sed -e 's/-/_/'`
 fi
 
-cp $HOME/dpdk-snap/* $RPMDIR/SOURCES
 snapser=`git log --pretty=oneline | wc -l`
 
 makever=`make showversion`
@@ -133,15 +128,9 @@ elif [ ! -z "$rc" ]; then
     cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
 else
     prefix=dpdk-${basever:0:5}
-    if [[ "$DPDK_PATCH"  =~ "yes" && "$DPDK_VERSION" =~ "16.11" ]]; then
-        echo "----------------------------------------------"
-        echo "Copy applicable patches."
-        echo cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
-        cp $TOPDIR/patches/$DPDK_VERSION/* $RPMDIR/SOURCES
-        cp $HOME/dpdk-snap/dpdk.1611.spec $TMPDIR/dpdk/dpdk.spec
-    elif [[ "$DPDK_VERSION" =~ "16.07" ]]; then
-        cp $HOME/dpdk-snap/dpdk.1607.spec $TMPDIR/dpdk/dpdk.spec
-    else
+    if [[ "$DPDK_VERSION" =~ "18" ]]; then
+        cp $HOME/dpdk-snap/dpdk.1802.spec $TMPDIR/dpdk/dpdk.spec
+    else #1711
         cp $HOME/dpdk-snap/dpdk.spec $TMPDIR/dpdk/dpdk.spec
     fi
 fi
@@ -184,17 +173,17 @@ if [[ "$DPDK_VERSION" =~ "master" ]]; then
 else
     rpmbuild "${BUILD_OPT[@]}" --define "_topdir $RPMDIR" --define "_ver $DPDK_VERSION" dpdk.spec
 fi
-
 #
 # Copy all RPMs to build directory
 #
 echo Copy all RPMs to build directory
 cd $RPMDIR
-RPMS=$(find . -type f -iname '*.rpm')
+RPMS=$(find . -type f -name '*.rpm')
 SRCRPMS=$(find . -type f -name '*.src.rpm')
 
 for i in $RPMS $SRCRPMS
 do
     cp $i $HOME
 done
+
 exit 0

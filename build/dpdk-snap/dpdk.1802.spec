@@ -297,6 +297,7 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %{_bindir}/dpdk-pdump
 %{_bindir}/dpdk-pmdinfo
 %{_bindir}/dpdk-test-crypto-perf
+%{_bindir}/testbbdev
 %endif
 
 %if %{with examples}
@@ -306,6 +307,9 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %endif
 
 %changelog
+* Wed Jun 6 2018 Thomas F Herbert <therbert@redhat.com> - 18.02-1
+- Include testbbdev
+
 * Mon Jun 4 2018 Thomas F Herbert <therbert@redhat.com> - 17.11.2-2
 - Backport changes from Fedora 28 17.11.2-1.f28
 - Remove dependency on Python3 for Centos

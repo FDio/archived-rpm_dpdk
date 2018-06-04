@@ -15,67 +15,43 @@
 #    limitations under the License.
 set -e
 
-echo =============================16.07================================
-echo "Build DPDK RPM for 16.07 release"
-
-./build_dpdk_rpm.sh -g 16.07
-
-echo =============================16.11================================
-echo "Build DPDK RPM for 16.11 release"
-
-./build_dpdk_rpm.sh -g 16.11 -p yes
-
-echo "Build DPDK SRPM for 16.11 release"
-
-./build_dpdk_rpm.sh -g 16.11 -p yes -s yes
-
-echo =============================17.02================================
-echo "Build DPDK RPM for 17.02 release"
-
-./build_dpdk_rpm.sh -g 17.02
-
-echo "Build DPDK SRPM for 17.02 release"
-
-./build_dpdk_rpm.sh -g 17.02 -s yes
-
-echo "Build DPDK RPM from snapshot of master"
-
-echo =============================17.05================================
-echo "Build DPDK RPM for 17.05 release"
-
-./build_dpdk_rpm.sh -g 17.05
-
-echo "Build DPDK SRPM for 17.05 release"
-
-./build_dpdk_rpm.sh -g 17.05 -s yes
-
-echo =============================17.08-rc1================================
-echo "Build DPDK RPM for 17.08-rc1 release"
-
-./build_dpdk_rpm.sh -g 17.08-rc1
-
-echo "Build DPDK SRPM for 17.08-rc1 release"
-
-./build_dpdk_rpm.sh -g 17.08-rc1 -s yes
-
-echo =============================17.08-rc2================================
-echo "Build DPDK RPM for 17.08-rc2 release"
-
-./build_dpdk_rpm.sh -g 17.08-rc2
-
-echo "Build DPDK SRPM for 17.08-rc2 release"
-
-./build_dpdk_rpm.sh -g 17.08-rc2 -s yes
-
-echo =============================Current master================================
-echo "Build DPDK RPM from snapshot of master"
-./build_dpdk_rpm.sh -g master
-
-echo "Build DPDK SRPM from snapshot of master"
-./build_dpdk_rpm.sh -g master -s yes
 
 
-echo =============================Clean up temporary directories================================
-./clean.sh
+CLEAN=yes
+
+
+echo =============================17.11================================
+echo "Build DPDK RPM for 17.11 release"
+
+./build_dpdk_rpm.sh -g 17.11
+
+echo "Build DPDK SRPM for 17.11 release"
+
+./build_dpdk_rpm.sh -g 17.11 -s yes
+
+echo =============================18.02================================
+echo "Build DPDK RPM for 18.02 release"
+
+./build_dpdk_rpm.sh -g 18.02
+
+echo "Build DPDK SRPM for 18.02 release"
+
+./build_dpdk_rpm.sh -g 18.02 -s yes
+
+echo =============================18.05================================
+echo "Build DPDK RPM for 18.05 release"
+
+./build_dpdk_rpm.sh -g 18.05
+
+echo "Build DPDK SRPM for 18.05 release"
+
+./build_dpdk_rpm.sh -g 18.05 -s yes
+
+
+if [[ -z "${CLEAN##*y*}" ]]; then
+    echo =============================Clean up temporary directories================================
+    ./clean.sh
+fi
+
 
 exit 0

@@ -7,7 +7,7 @@
 
 # Dont edit Version: and Release: directly, only these:
 %define ver %{?_ver}
-%define rel 1
+%define rel 2
 # Define when building git snapshots
 
 %define srcver %{ver}%{?_snapver:.%{_snapver}}
@@ -36,7 +36,7 @@ License: BSD and LGPLv2 and GPLv2
 # other techniques, carefully crafted assembly instructions.  As such it
 # needs extensive work to port it to other architectures.
 #
-ExclusiveArch: x86_64 i686 aarch64 ppc64le
+ExclusiveArch: x86_64 i686 ppc64le
 
 # machine_arch maps between rpm and dpdk arch name, often same as _target_cpu
 # machine_tmpl is the config template machine name, often "native"
@@ -307,6 +307,9 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %endif
 
 %changelog
+* Wed Jul 6 2018 Thomas F Herbert <therbert@redhat.com> - 18.02-2
+- Remove aarch64 until compilation problem is resolved for Centos
+
 * Wed Jun 6 2018 Thomas F Herbert <therbert@redhat.com> - 18.02-1
 - Include testbbdev
 

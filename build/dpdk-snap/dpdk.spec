@@ -7,7 +7,7 @@
 
 # Dont edit Version: and Release: directly, only these:
 %define ver %{?_ver}
-%define rel 1
+%define rel 3
 # Define when building git snapshots
 
 %define srcver %{ver}%{?_snapver:.%{_snapver}}
@@ -36,7 +36,7 @@ License: BSD and LGPLv2 and GPLv2
 # other techniques, carefully crafted assembly instructions.  As such it
 # needs extensive work to port it to other architectures.
 #
-ExclusiveArch: x86_64 i686 aarch64 ppc64le
+ExclusiveArch: x86_64 i686 ppc64le
 
 # machine_arch maps between rpm and dpdk arch name, often same as _target_cpu
 # machine_tmpl is the config template machine name, often "native"
@@ -306,6 +306,9 @@ sed -i -e 's:-%{machine_tmpl}-:-%{machine}-:g' %{buildroot}/%{_sysconfdir}/profi
 %endif
 
 %changelog
+* Mon Jul 5 2018 Thomas F Herbert <therbert@redhat.com> - 17.11.2-3
+- Build for x86_64 and ppc64le only.
+
 * Mon Jun 4 2018 Thomas F Herbert <therbert@redhat.com> - 17.11.2-2
 - Backport changes from Fedora 28 17.11.2-1.f28
 - Remove dependency on Python3 for Centos

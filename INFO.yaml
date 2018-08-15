@@ -1,0 +1,61 @@
+---
+project: 'rpm_dpdk'
+project_creation_date: 2016-10-7''
+project_category: ''
+lifecycle_state: 'Incubation'
+project_lead: &rpm_dpdk_ptl
+    name: 'n/a'
+    email: ''
+    id: ''
+    company: ''
+    timezone: ''
+primary_contact: *rpm_dpdk_ptl
+issue_tracking:
+    type: 'jira'
+    url: 'https://jira.fd.io/browse/RPMDPDK'
+    key: 'RPMDPDK'
+mailing_list:
+    type: 'groups.io'
+    url: 'https://lists.fd.io/g/rpm_dpdk'
+    tag: '<[sub-project_name]>'
+realtime_discussion:
+    type: 'irc'
+    server: 'freenode'
+    channel: 'rpm-dpdk'
+meetings:
+    - type: 'bluejeans'
+      agenda: ''
+      url: 'https://wiki.fd.io/view/Rpm-dpdk/Meeting'
+      server: 'n/a'
+      channel: 'rpm_dpdk'
+      repeats: 'bi-weekly'
+      time: '1300 EST'
+repositories:
+    - 'rpm_dpdk'
+committers:
+    - <<: *rpm_dpdk_ptl
+    - name: 'Billy McFall'
+      company: 'gmail'
+      email: 'william.mcfall.ii@gmail.com'
+      id: 'BillyM'
+      timezone: 'Atlantis/Shangri-la'
+    - name: 'Thomas F Herbert'
+      company: 'redhat'
+      email: 'therbert@redhat.com'
+      id: 'tfherbert'
+      timezone: 'Atlantis/Shangri-la'
+    - name: 'Vanessa Rene Valderrama'
+      company: 'linuxfoundation'
+      email: 'vvalderrama@linuxfoundation.org'
+      id: 'valderrv'
+      timezone: 'Atlantis/Shangri-la'
+tsc:
+    # yamllint disable rule:line-length
+    approval: ''
+    changes:
+        - type: 'removal'
+          name: ''
+          link: ''
+        - type: 'promotion'
+          name: ''
+          link: ''
